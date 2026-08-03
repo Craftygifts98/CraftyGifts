@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop All Gifts — Crafty Gifts</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="shop">
+
+<div id="header-placeholder"></div>
+<script src="assets/js/products.js"></script>
+<script src="assets/js/common.js"></script>
+
+<main class="wrap">
+  <nav class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span class="current">Shop</span></nav>
+
+  <div class="page-banner">
+    <span class="eyebrow" style="justify-content:center;">Full Collection</span>
+    <h1 class="text-reveal">Shop All Gifts</h1>
+    <p>Every piece we make, in one place — filter by category to find exactly what you need.</p>
+  </div>
+
+  <div class="filter-bar">
+    <div class="filter-pills" id="filterPills"></div>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <span class="result-count" id="resultCount"></span>
+      <select class="sort-select" id="sortSelect">
+        <option value="default">Sort: Featured</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="name-asc">Name: A to Z</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="product-grid" id="shopGrid"></div>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script>
+  let activeFilter = "all";
+  let activeSort = "default";
+
+  const pillsEl = document.getElementById("filterPills");
+  const pills = [{ slug: "all", name: "All" }, ...CATEGORIES];
+  pillsEl.innerHTML = pills.map(c => `<button class="filter-pill${c.slug === 'all' ? ' active' : ''}" data-slug="${c.slug}">${c.name}</button>`).join("");
+
+  function applyShop() {
+    let list = activeFilter === "all" ? [...PRODUCTS] : getProductsByCategory(activeFilter);
+    if (activeSort === "price-asc") list.sort((a, b) => a.price - b.price);
+    else if (activeSort === "price-desc") list.sort((a, b) => b.price - a.price);
+    else if (activeSort === "name-asc") list.sort((a, b) => a.name.localeCompare(b.name));
+    document.getElementById("resultCount").textContent = `${list.length} product${list.length !== 1 ? "s" : ""}`;
+    renderProductGrid(document.getElementById("shopGrid"), list);
+  }
+
+  pillsEl.addEventListener("click", (e) => {
+    const btn = e.target.closest(".filter-pill");
+    if (!btn) return;
+    pillsEl.querySelectorAll(".filter-pill").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    activeFilter = btn.dataset.slug;
+    applyShop();
+  });
+  document.getElementById("sortSelect").addEventListener("change", (e) => {
+    activeSort = e.target.value;
+    applyShop();
+  });
+
+  // Deep-link support: shop.html?cat=slug pre-selects a filter
+  const params = new URLSearchParams(window.location.search);
+  const preselect = params.get("cat");
+  if (preselect && CATEGORIES.some(c => c.slug === preselect)) {
+    activeFilter = preselect;
+    pillsEl.querySelectorAll(".filter-pill").forEach(p => p.classList.toggle("active", p.dataset.slug === preselect));
+  }
+
+  applyShop();
+</script>
+
+</body>
+</html>

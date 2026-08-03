@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Product — Crafty Gifts</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="shop">
+
+<div id="header-placeholder"></div>
+<script src="assets/js/products.js"></script>
+<script src="assets/js/common.js"></script>
+
+<main class="wrap" id="productMain">
+  <nav class="breadcrumb" id="breadcrumbNav"></nav>
+  <div id="productContent"></div>
+
+  <section class="section-tight" id="relatedSection" style="display:none;">
+    <div class="section-head reveal">
+      <span class="eyebrow">You May Also Like</span>
+      <h2>Related Pieces</h2>
+    </div>
+    <div class="product-grid" id="relatedGrid"></div>
+  </section>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const product = getProductById(params.get("id"));
+  let qty = 1;
+  let activeImageIndex = 0;
+
+  if (!product) {
+    document.getElementById("productContent").innerHTML = `
+      <div class="empty-state">
+        <h3>Product not found</h3>
+        <p>This item may have been removed or the link is incorrect.</p>
+        <a href="shop.html" class="btn btn-primary">Back to Shop</a>
+      </div>`;
+  } else {
+    const cat = getCategoryBySlug(product.category);
+    document.getElementById("pageTitle").textContent = product.name + " — Crafty Gifts";
+    document.getElementById("breadcrumbNav").innerHTML = `
+      <a href="index.html">Home</a><span class="sep">/</span>
+      <a href="shop.html">Shop</a><span class="sep">/</span>
+      <a href="category.html?cat=${product.category}">${cat ? cat.name : ""}</a><span class="sep">/</span>
+      <span class="current">${product.name}</span>`;
+
+    function renderProduct() {
+      const images = product.images;
+      document.getElementById("productContent").innerHTML = `
+        <div class="product-detail">
+          <div>
+            <div class="pd-gallery-main"><img src="${images[activeImageIndex]}" alt="${product.name}" id="pdMainImage"></div>
+            ${images.length > 1 ? `
+            <div class="pd-thumbs">
+              ${images.map((img, i) => `<div class="pd-thumb${i === activeImageIndex ? " active" : ""}" data-idx="${i}"><img src="${img}" alt="${product.name} view ${i + 1}"></div>`).join("")}
+            </div>` : ""}
+          </div>
+          <div class="pd-info">
+            <span class="cat-label">${cat ? cat.name : ""}</span>
+            <h1 class="text-reveal">${product.name}</h1>
+            <div class="pd-price">${product.priceLabel}</div>
+            <p class="pd-desc">${product.desc}</p>
+
+            <div class="pd-specs">
+              <div class="pd-spec-row"><div class="label">Materials</div><div class="value">${product.materials}</div></div>
+              <div class="pd-spec-row"><div class="label">Dimensions</div><div class="value">${product.dimensions}</div></div>
+              <div class="pd-spec-row"><div class="label">Personalization</div><div class="value">${product.personalization}</div></div>
+              <div class="pd-spec-row"><div class="label">Delivery Time</div><div class="value">${product.delivery}</div></div>
+            </div>
+
+            <div class="pd-qty">
+              <div class="qty-control">
+                <button id="qtyMinus">−</button>
+                <span id="qtyValue">${qty}</span>
+                <button id="qtyPlus">+</button>
+              </div>
+              <span style="font-size:0.85rem;color:var(--ink-soft);">quantity</span>
+            </div>
+
+            <div class="pd-actions">
+              <button class="btn btn-outline" id="addToCartBtn">Add to Cart</button>
+              <a href="#" class="btn btn-terracotta" id="orderWaBtn">Order via WhatsApp</a>
+            </div>
+
+            <div class="pd-trust">
+              <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Preview sent before we engrave</div>
+              <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Gift-ready packaging</div>
+              <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Nationwide shipping</div>
+            </div>
+          </div>
+        </div>`;
+
+      // Thumbnail switching
+      document.querySelectorAll(".pd-thumb").forEach((thumb) => {
+        thumb.addEventListener("click", () => {
+          activeImageIndex = parseInt(thumb.dataset.idx, 10);
+          document.getElementById("pdMainImage").src = images[activeImageIndex];
+          document.querySelectorAll(".pd-thumb").forEach((t) => t.classList.remove("active"));
+          thumb.classList.add("active");
+        });
+      });
+
+      // Qty controls
+      document.getElementById("qtyMinus").addEventListener("click", () => { qty = Math.max(1, qty - 1); document.getElementById("qtyValue").textContent = qty; });
+      document.getElementById("qtyPlus").addEventListener("click", () => { qty += 1; document.getElementById("qtyValue").textContent = qty; });
+
+      // Add to cart
+      document.getElementById("addToCartBtn").addEventListener("click", () => addToCart(product.id, qty));
+
+      // Order via WhatsApp (direct, this product only)
+      const waBtn = document.getElementById("orderWaBtn");
+      waBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const msg = `Hi Crafty Gifts! I'd like to order:\n• ${product.name} x${qty} — ${product.price * qty} EGP`;
+        window.open(waLink(msg), "_blank");
+      });
+    }
+    renderProduct();
+
+    // Related products
+    const related = getRelatedProducts(product, 4);
+    if (related.length > 0) {
+      document.getElementById("relatedSection").style.display = "block";
+      renderProductGrid(document.getElementById("relatedGrid"), related);
+    }
+  }
+  observeReveals();
+</script>
+
+</body>
+</html>

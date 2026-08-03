@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Categories — Crafty Gifts</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="categories">
+
+<div id="header-placeholder"></div>
+<script src="assets/js/products.js"></script>
+<script src="assets/js/common.js"></script>
+
+<main class="wrap">
+  <nav class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span class="current">Categories</span></nav>
+
+  <div class="page-banner">
+    <span class="eyebrow" style="justify-content:center;">Browse by Occasion</span>
+    <h1 class="text-reveal">Categories</h1>
+    <p>Every category we craft for, from car charms to wedding keepsakes.</p>
+  </div>
+
+  <div class="cat-tile-grid" id="categoriesGrid" style="margin-bottom: 40px;"></div>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script>
+  document.getElementById("categoriesGrid").innerHTML = CATEGORIES.map(c => `
+    <a href="category.html?cat=${c.slug}" class="cat-tile reveal">
+      <img src="${c.tile}" alt="${c.name}">
+      <div class="cat-tile-label">
+        <span class="count">${getProductsByCategory(c.slug).length} pieces</span>
+        <h3>${c.name}</h3>
+      </div>
+    </a>`).join("");
+  observeReveals();
+</script>
+
+</body>
+</html>

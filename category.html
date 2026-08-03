@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Category — Crafty Gifts</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="shop">
+
+<div id="header-placeholder"></div>
+<script src="assets/js/products.js"></script>
+<script src="assets/js/common.js"></script>
+
+<main class="wrap">
+  <nav class="breadcrumb">
+    <a href="index.html">Home</a><span class="sep">/</span>
+    <a href="categories.html">Categories</a><span class="sep">/</span>
+    <span class="current" id="breadcrumbCurrent">Category</span>
+  </nav>
+
+  <div class="page-banner">
+    <span class="eyebrow" style="justify-content:center;">Category</span>
+    <h1 class="text-reveal" id="categoryTitle">Category</h1>
+    <p id="categoryCount"></p>
+  </div>
+
+  <div class="filter-bar">
+    <div></div>
+    <select class="sort-select" id="sortSelect">
+      <option value="default">Sort: Featured</option>
+      <option value="price-asc">Price: Low to High</option>
+      <option value="price-desc">Price: High to Low</option>
+      <option value="name-asc">Name: A to Z</option>
+    </select>
+  </div>
+
+  <div class="product-grid" id="categoryGrid"></div>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const slug = params.get("cat");
+  const category = getCategoryBySlug(slug);
+  let products = category ? getProductsByCategory(slug) : [];
+
+  if (category) {
+    document.getElementById("pageTitle").textContent = category.name + " — Crafty Gifts";
+    document.getElementById("categoryTitle").textContent = category.name;
+    document.getElementById("breadcrumbCurrent").textContent = category.name;
+    document.getElementById("categoryCount").textContent = `${products.length} handcrafted piece${products.length !== 1 ? "s" : ""}`;
+  } else {
+    document.getElementById("categoryTitle").textContent = "Category not found";
+    document.getElementById("breadcrumbCurrent").textContent = "Not found";
+  }
+
+  function renderCategory() {
+    const sort = document.getElementById("sortSelect").value;
+    let list = [...products];
+    if (sort === "price-asc") list.sort((a, b) => a.price - b.price);
+    else if (sort === "price-desc") list.sort((a, b) => b.price - a.price);
+    else if (sort === "name-asc") list.sort((a, b) => a.name.localeCompare(b.name));
+    renderProductGrid(document.getElementById("categoryGrid"), list);
+  }
+  document.getElementById("sortSelect").addEventListener("change", renderCategory);
+  renderCategory();
+</script>
+
+</body>
+</html>
