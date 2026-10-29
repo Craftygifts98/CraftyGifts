@@ -4,6 +4,14 @@
 // Trending, New Arrivals, and Product Detail pages.
 // ============================================================
 
+// ------------------------------------------------------------
+// GOOGLE SHEET LINK  (paste the "Publish to web → CSV" link here)
+// Leave it empty ("") to use only the built-in product list below.
+// ------------------------------------------------------------
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTV9pPBY2GBmUAGxbhuAp82BKfSsbQ1tiWkO-MzMVpetz8TU-o8t2WW6Tcr3RKM74Q4zBA9yoa7jTls/pub?gid=932496177&single=true&output=csv";       // link of the "Products" tab (Publish to web → CSV)
+const CATEGORIES_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTV9pPBY2GBmUAGxbhuAp82BKfSsbQ1tiWkO-MzMVpetz8TU-o8t2WW6Tcr3RKM74Q4zBA9yoa7jTls/pub?gid=651581600&single=true&output=csv"; // link of the "Categories" tab (Publish to web → CSV)
+const SHEET_CACHE_MINUTES = 5; // how long a visitor's browser reuses the sheet before re-fetching
+
 const CATEGORIES = [
   { slug: "car-accessories", name: "Car Accessories", tile: "assets/products/name-charm-hanging.jpg" },
   { slug: "keychains", name: "Keychains", tile: "assets/products/keychain-spotify-arabic.jpg" },
@@ -12,8 +20,8 @@ const CATEGORIES = [
   { slug: "baby-gifts", name: "Baby Gifts", tile: "assets/products/newborn-plaque-farah.jpg" },
   { slug: "home-decor", name: "Home Decor", tile: "assets/products/welcome-home-plaque.jpg" },
   { slug: "custom-gifts", name: "Custom Gifts", tile: "assets/products/birthday-spotify-plaque.jpg" },
-  { slug: "Business Accessories", name: "Business Accessories", tile: "assets/products/logo shop- m hijab.jpg" },
-  { slug: "Ramdan Decor", name: "Ramdan Decor", tile: "assets/products/Lighting- Acrylic-Ramdan Kariem.jpg" },
+  { slug: "Business Accessories", name: "Business Accessories", tile: "assets/products/logo-shop-m-hijab.jpg" },
+  { slug: "Ramdan Decor", name: "Ramdan Decor", tile: "assets/products/lighting-acrylic-ramadan-kariem.jpg" },
 
 ];
 
@@ -23,7 +31,7 @@ const PRODUCTS = [
     name: "Newborn Birth Details Plaque",
     category: "baby-gifts",
     tags: ["bestseller"],
-    price: 350, priceLabel: "300–400 EGP",
+    price: 330, priceLabel: "300–400 EGP",
     images: ["assets/products/newborn-plaque-farah.jpg"],
     desc: "A softly lit acrylic keepsake engraved with your baby's name, birth date, weight, and length, mounted on a warm wood base with a gentle LED glow. Designed to sit on a shelf or nightstand as a lasting first record of the day they arrived.",
     materials: "Laser-engraved acrylic, natural wood base, LED light unit",
@@ -36,7 +44,7 @@ const PRODUCTS = [
     name: "Baby Birth Circle Plaque",
     category: "baby-gifts",
     tags: [],
-    price: 330, priceLabel: "280–380 EGP",
+    price: 250, priceLabel: "250–300 EGP",
     images: ["assets/products/newborn-circle-pauly.jpg"],
     desc: "A circular wooden plaque with a printed photo frame, birth-month calendar, and clock detail marking the exact time of arrival. A warm, illustrative keepsake for the nursery wall or shelf.",
     materials: "Printed wood panel, protective coating",
@@ -62,7 +70,7 @@ const PRODUCTS = [
     name: "Kids Name Letter Décor",
     category: "baby-gifts",
     tags: ["trending"],
-    price: 350, priceLabel: "300–400 EGP",
+    price: 250, priceLabel: "300–400 EGP",
     images: ["assets/products/letter-name-ziad.jpg"],
     desc: "A playful oversized initial finished with a themed illustration and your child's name in script, standing on its own wood base. A cheerful addition to any nursery or kids' room.",
     materials: "Painted wood, acrylic name overlay, wood stand",
@@ -75,7 +83,7 @@ const PRODUCTS = [
     name: "Newborn Shadow Box Frame",
     category: "baby-gifts",
     tags: ["trending"],
-    price: 350, priceLabel: "300–400 EGP",
+    price: 320, priceLabel: "300–350 EGP",
     images: ["assets/products/frame-couple-mourad.jpg"],
     desc: "A shadow box frame pairing a couple's photo with hand-illustrated details and a blessing message — a warm keepsake to mark your baby's birthday.",
     materials: "Wood shadow box frame, printed photo insert, layered paper detail",
@@ -101,7 +109,7 @@ const PRODUCTS = [
     name: "Graduation Photo Number Plaque",
     category: "graduation-gifts",
     tags: ["bestseller", "new"],
-    price: 430, priceLabel: "380–480 EGP",
+    price: 320, priceLabel: "300–350 EGP",
     images: [
       "assets/products/graduation-photo-plaque-desk.jpg",
       "assets/products/graduation-photo-plaque-marble.jpg",
@@ -118,7 +126,7 @@ const PRODUCTS = [
     name: "Graduation Name Letter Stand",
     category: "graduation-gifts",
     tags: [],
-    price: 400, priceLabel: "350–450 EGP",
+    price: 290, priceLabel: "250–300 EGP",
     images: ["assets/products/graduation-letter-hams.jpg"],
     desc: "A glittered acrylic initial paired with the graduate's name in script and a graduation cap detail marking the year — a striking centerpiece for photos or a desk.",
     materials: "Glitter acrylic, mirror acrylic name overlay, wood stand",
@@ -144,7 +152,7 @@ const PRODUCTS = [
     name: "Engagement shadow box ",
     category: "wedding-gifts",
     tags: ["new"],
-    price: 350, priceLabel: "300–400 EGP",
+    price: 300, priceLabel: "300–400 EGP",
     images: ["assets/products/couples-wedding-shadowbox.jpg"],
     desc: "A shadow box frame, unique love story with a custom map that beautifully captures where two hearts became one. Featuring personalized map locations shaped into a couple's silhouette, this handcrafted keepsake symbolizes the journey of love and the places that matter most",
     materials: "Wood shadow box frame, printed photo insert, layered paper detail",
@@ -157,8 +165,8 @@ const PRODUCTS = [
     name: "Fingerprint Frame",
     category: "wedding-gifts",
     tags: ["new"],
-    price: 350, priceLabel: "300–400 EGP",
-    images: ["assets/products/fingerprint-ibrahiem&rehab-acrylic.jpg"],
+    price: 300, priceLabel: "300–400 EGP",
+    images: ["assets/products/fingerprint-ibrahiem-and-rehab-acrylic.jpg"],
     desc: "a unique personalized fingerprint acrylic plaque, designed to capture the special bond between two hearts. This elegant keepsake features custom names, a meaningful date, and fingerprint spaces that represent your one-of-a-kind connection.",
     materials: "Laser-engraved acrylic, natural wood base",
     dimensions: "Approx. 15 × 20 cm (customizable)",
@@ -170,8 +178,8 @@ const PRODUCTS = [
     name: "Family Fingerprint",
     category: "wedding-gifts",
     tags: [],
-    price: 500, priceLabel: "300–500 EGP",
-    images: ["assets/products/Family-flowered-fingerprint.jpg"],
+    price: 400, priceLabel: "300–500 EGP",
+    images: ["assets/products/family-flowered-fingerprint.jpg"],
     desc: "A one-of-a-kind family keepsake with our personalized fingerprint frame. Designed to celebrate the love and connection between family members, this elegant décor piece features custom names alongside fingerprint spaces that symbolize each person's unique identity.",
     materials: "Laser-engraved acrylic, natural wood base",
     dimensions: "Approx. 15 × 20 cm (customizable)",
@@ -184,7 +192,7 @@ const PRODUCTS = [
     category: "wedding-gifts",
     tags: ["new"],
     price: 300, priceLabel: "300–400 EGP",
-    images: ["assets/products/wedding-ahmed&esraa-shadowbox.jpg"],
+    images: ["assets/products/wedding-ahmed-and-esraa-shadowbox.jpg"],
     desc: "A shadow box frame pairing a couple's photo with hand-illustrated details and a blessing message — a warm keepsake to mark an engagement or wedding.",
     materials: "Wood shadow box frame, printed photo insert, layered paper detail",
     dimensions: "Approx. 20 × 20 cm",
@@ -244,11 +252,37 @@ const PRODUCTS = [
     delivery: "1–3 business days, nationwide shipping",
   },
   {
+    id: "lighting-shadowbox",
+    name: "lighting shadowbox",
+    category: "baby-gifts",
+    tags: ["bestseller"],
+    price: 310, priceLabel: "280–350 EGP",
+    images: ["assets/products/lighting-shadowbox-karma.jpg"],
+    desc: "An LED acrylic plaque styled after a music player, featuring a couple or family photo alongside a scannable song code — a favorite for anniversaries and birthdays alike.",
+    materials: "Printed acrylic, LED wood base",
+    dimensions: "Approx. 15 × 20 cm",
+    personalization: "Photo, song choice, date, and short message",
+    delivery: "2–4 business days, nationwide shipping",
+  },
+   {
+    id: "graduation-shadowbox",
+    name: "graduation shadowbox",
+    category: "graduation-gifts",
+    tags: ["bestseller"],
+    price: 290, priceLabel: "250–300 EGP",
+    images: ["assets/products/graduation.jpg"],
+    desc: "An LED acrylic plaque styled after a music player, featuring a couple or family photo alongside a scannable song code — a favorite for anniversaries and birthdays alike.",
+    materials: "Printed acrylic, LED wood base",
+    dimensions: "Approx. 15 × 20 cm",
+    personalization: "Photo, song choice, date, and short message",
+    delivery: "2–4 business days, nationwide shipping",
+  },
+  {
     id: "spotify-birthday-plaque",
     name: "Spotify-Style Birthday Plaque",
     category: "custom-gifts",
     tags: ["bestseller"],
-    price: 400, priceLabel: "350–450 EGP",
+    price: 300, priceLabel: "280–350 EGP",
     images: ["assets/products/birthday-spotify-plaque.jpg"],
     desc: "An LED acrylic plaque styled after a music player, featuring a couple or family photo alongside a scannable song code — a favorite for anniversaries and birthdays alike.",
     materials: "Printed acrylic, LED wood base",
@@ -269,6 +303,7 @@ const PRODUCTS = [
     personalization: "Photo, name, and blessing message",
     delivery: "2–4 business days, nationwide shipping",
   },
+
   {
     id: "name-tumbler",
     name: "Personalized Name Tumbler",
@@ -314,7 +349,7 @@ const PRODUCTS = [
     category: "keychains",
     tags: [],
     price: 100, priceLabel: "50–150 EGP",
-    images: ["assets/products/Rezin-M -keychain.jpg"],
+    images: ["assets/products/resin-m-keychain.jpg"],
     desc: "A personalized riesin keychain, beautifully designed with two initials connected by a heart and a meaningful date engraved below. Simple, elegant, and timeless, this custom keychain makes a thoughtful keepsake for couples, best friends, family members, or anyone celebrating a special moment.",
    materials: "Acrylic, metal keyring, tassel detail",
     dimensions: "Approx. 6 cm diameter",
@@ -353,7 +388,7 @@ const PRODUCTS = [
     category: "Business Accessories",
     tags: ["new"],
     price: 250, priceLabel: "200–300 EGP",
-    images: ["assets/products/Desk name- acrylic-Amira.jpg"],
+    images: ["assets/products/desk-nameplate-acrylic-amira.jpg"],
     desc: "An acrylic desk nameplate finished with a name, title, and logo on a natural wood base — a polished addition to any office desk or clinic reception.",
     materials: "Acrylic, printed detail, wood base",
     dimensions: "Approx. 20 × 8 cm",
@@ -365,34 +400,12 @@ const PRODUCTS = [
     name: "Branded Logo Stand",
     category: "Business Accessories",
     tags: ["new"],
-    price: 250, priceLabel: "200–300 EGP",
-    images: ["assets/products/meem hijab-acrylic -lighting.jpg"],
-    desc: "An acrylic logo stand finished with a brand logo on a natural wood base — a polished addition to any office desk or clinic reception.",
-    materials: "Acrylic, printed detail, wood base",
-    dimensions: "Approx. 20 × 15 cm",
-    personalization: "Logo (optional)",
-    delivery: "2–4 business days, nationwide shipping",
-  },
-  {
-    id: "logo-stand",
-    name: "Branded Logo Stand",
-    category: "Business Accessories",
-    tags: ["new"],
-    price: 250, priceLabel: "200–300 EGP",
-    images: ["assets/products/Lighting- Acrylic- Dicom clinc.jpg"],
-    desc: "An acrylic logo stand finished with a brand logo on a natural wood base — a polished addition to any office desk or clinic reception.",
-    materials: "Acrylic, printed detail, wood base",
-    dimensions: "Approx. 20 × 15 cm",
-    personalization: "Logo (optional)",
-    delivery: "2–4 business days, nationwide shipping",
-  },
-  {
-    id: "logo-stand",
-    name: "Branded Logo Stand",
-    category: "Business Accessories",
-    tags: ["new"],
-    price: 250, priceLabel: "200–300 EGP",
-    images: ["assets/products/business logo-lighting acrylic.jpg"],
+    price: 280, priceLabel: "250–300 EGP",
+    images: [
+      "assets/products/meem-hijab-acrylic-lighting.jpg",
+      "assets/products/lighting-acrylic-dicom-clinic.jpg",
+      "assets/products/business-logo-lighting-acrylic.jpg",
+    ],
     desc: "An acrylic logo stand finished with a brand logo on a natural wood base — a polished addition to any office desk or clinic reception.",
     materials: "Acrylic, printed detail, wood base",
     dimensions: "Approx. 20 × 15 cm",
@@ -404,8 +417,8 @@ const PRODUCTS = [
     name: "Branded Desk Calendar",
     category: "Business Accessories",
     tags: [],
-    price: 150, priceLabel: "150–220 EGP",
-    images: ["assets/products/lighthouse-desk calendar.jpg"],
+    price: 150, priceLabel: "120–220 EGP",
+    images: ["assets/products/lighthouse-desk-calendar.jpg"],
     desc: "A custom desk calendar printed with your Favourite Design and branded monthly stickers — a small, recurring brand touch for any office desk.",
     materials: "Printed cardstock, standing easel base",
     dimensions: "Approx. 12 × 15 cm",
@@ -417,7 +430,7 @@ const PRODUCTS = [
     name: "Office Desk Calendar",
     category: "Business Accessories",
     tags: [],
-    price: 185, priceLabel: "150–220 EGP",
+    price: 150, priceLabel: "120–220 EGP",
     images: ["assets/products/corporate-calendar-moga.jpg"],
     desc: "A custom desk calendar printed with your company logo and branded monthly stickers — a small, recurring brand touch for any office desk.",
     materials: "Printed cardstock, standing easel base",
@@ -431,7 +444,7 @@ const PRODUCTS = [
     category: "Business Accessories",
     tags: [],
     price: 998, priceLabel: "800–1100 EGP",
-    images: ["assets/products/wall calendar-acrylic-venil.jpg"],
+    images: ["assets/products/wall-calendar-acrylic-vinyl.jpg"],
     desc: "A custom wall calendar printed with your company logo and branded monthly stickers — a small, recurring brand touch for any office desk.",
     materials: "Printed cardstock, standing easel base",
     dimensions: "Approx. 90 × 120 cm",
@@ -442,8 +455,8 @@ const PRODUCTS = [
     id: "social-stand",
     name: "Branded Social Media Stand",
     category: "custom-gifts",
-    tags: ["trending"],
-    price: 425, priceLabel: "350–500 EGP",
+    tags: [],
+    price: 300, priceLabel: "280–350 EGP",
     images: ["assets/products/corporate-stand-avro.jpg"],
     desc: "A gold-detail acrylic stand displaying your brand's logo alongside scannable QR codes linking to your social pages — a polished reception-desk piece for any business.",
     materials: "Acrylic, gold foil detail, wood base",
@@ -456,7 +469,7 @@ const PRODUCTS = [
     name: "Branded Social Media  Stand",
     category: "Business Accessories",
     tags: ["trending"],
-    price: 425, priceLabel: "350–500 EGP",
+    price: 330, priceLabel: "300–350 EGP",
     images: ["assets/products/corporate-stand-avro.jpg"],
     desc: "A gold-detail acrylic stand displaying your brand's logo alongside scannable QR codes linking to your social pages — a polished reception-desk piece for any business.",
     materials: "Acrylic, gold foil detail, wood base",
@@ -469,8 +482,8 @@ const PRODUCTS = [
     name: "Branded Social Media QR Stand",
     category: "Business Accessories",
     tags: ["trending"],
-    price: 425, priceLabel: "350–500 EGP",
-    images: ["assets/products/Acrylic-QR code-Dr Akram.jpg"],
+    price: 280, priceLabel: "280–300 EGP",
+    images: ["assets/products/social-qr-stand-dr-akram.jpg"],
     desc: "A gold-detail acrylic stand displaying your brand's logo alongside scannable QR codes linking to your social pages — a polished reception-desk piece for any business.",
     materials: "Acrylic, gold foil detail, wood base",
     dimensions: "Approx. 20 × 25 cm",
@@ -482,8 +495,8 @@ const PRODUCTS = [
     name: "Ramdan vinyl stand",
     category: "Ramdan Decor",
     tags: ["trending"],
-    price: 425, priceLabel: "350–500 EGP",
-    images: ["assets/products/Ramdan- acrylic -venil.jpg"],
+    price: 300, priceLabel: "280–330 EGP",
+    images: ["assets/products/ramadan-acrylic-vinyl.jpg"],
     desc: "A gold-detail acrylic stand — a polished reception-desk piece for Ramdan decoration.",
     materials: "Acrylic, gold foil detail, wood base",
     dimensions: "Approx. 20 × 25 cm",
@@ -495,8 +508,8 @@ const PRODUCTS = [
     name: "Ramdan lighting stand",
     category: "Ramdan Decor",
     tags: ["trending"],
-    price: 425, priceLabel: "350–500 EGP",
-    images: ["assets/products/Lighting- Acrylic-Ramdan Kariem.jpg"],
+    price: 330, priceLabel: "300–350 EGP",
+    images: ["assets/products/lighting-acrylic-ramadan-kariem.jpg"],
     desc: "A gold-detail lighting stand — a polished reception-desk piece for Ramdan decoration.",
     materials: "Acrylic, gold foil detail, wood base",
     dimensions: "Approx. 20 × 25 cm",
@@ -504,6 +517,140 @@ const PRODUCTS = [
     delivery: "2–4 business days, nationwide shipping",
   },
 ];
+
+
+// ------------------------------------------------------------
+// LOAD CATEGORIES + PRODUCTS FROM GOOGLE SHEET (falls back to the lists above)
+// Sheet columns: id, name, category, price, priceLabel, tags,
+// image1, image2, image3, desc, materials, dimensions,
+// personalization, delivery, active
+// ------------------------------------------------------------
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = "", inQuotes = false;
+  text = text.replace(/^\uFEFF/, "");
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; } else inQuotes = false;
+      } else field += c;
+    } else if (c === '"') inQuotes = true;
+    else if (c === ",") { row.push(field); field = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(field); field = "";
+      if (row.some((x) => x.trim() !== "")) rows.push(row);
+      row = [];
+    } else field += c;
+  }
+  row.push(field);
+  if (row.some((x) => x.trim() !== "")) rows.push(row);
+  return rows;
+}
+
+function sheetCsvToProducts(csvText) {
+  const rows = parseCSV(csvText);
+  if (rows.length < 2) return [];
+  const header = rows[0].map((h) => h.trim().toLowerCase());
+  const col = (r, name) => {
+    const i = header.indexOf(name.toLowerCase());
+    return i === -1 ? "" : (r[i] || "").trim();
+  };
+  const toSlug = (v) => {
+    const key = v.trim().toLowerCase();
+    const hit = CATEGORIES.find((c) => c.slug.toLowerCase() === key || c.name.toLowerCase() === key);
+    return hit ? hit.slug : v.trim();
+  };
+  const list = [];
+  rows.slice(1).forEach((r, idx) => {
+    const active = col(r, "active").toLowerCase();
+    if (["no", "n", "false", "0", "hide", "hidden"].includes(active)) return;
+    const id = col(r, "id");
+    const name = col(r, "name");
+    const price = parseFloat(col(r, "price").replace(/[^\d.]/g, ""));
+    const images = ["image1", "image2", "image3", "image4", "image5"]
+      .map((k) => col(r, k))
+      .filter(Boolean)
+      .map((f) => (f.includes("/") ? f : "assets/products/" + f));
+    if (!id || !name || !(price > 0) || !images.length) {
+      console.warn("Sheet row " + (idx + 2) + " skipped (needs id, name, price, image1):", name || id);
+      return;
+    }
+    list.push({
+      id,
+      name,
+      category: toSlug(col(r, "category")),
+      tags: col(r, "tags").split(/[,;|]/).map((t) => t.trim().toLowerCase()).filter(Boolean),
+      price,
+      priceLabel: col(r, "pricelabel") || price + " EGP",
+      images,
+      desc: col(r, "desc"),
+      materials: col(r, "materials"),
+      dimensions: col(r, "dimensions"),
+      personalization: col(r, "personalization"),
+      delivery: col(r, "delivery") || "2–4 business days, nationwide shipping",
+    });
+  });
+  return list;
+}
+
+// Downloads a published CSV (or reuses the copy saved in the visitor's browser).
+function fetchSheetCsv(url, cacheKey, validate) {
+  let cached = null;
+  try { cached = JSON.parse(localStorage.getItem(cacheKey) || "null"); } catch (e) {}
+  if (cached && cached.csv && Date.now() - cached.t < SHEET_CACHE_MINUTES * 60000) return cached.csv;
+  try {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", url, false); // synchronous so every page has the data before it renders
+    xhr.send();
+    if (xhr.status === 200 && xhr.responseText && validate(xhr.responseText)) {
+      try { localStorage.setItem(cacheKey, JSON.stringify({ t: Date.now(), csv: xhr.responseText })); } catch (e) {}
+      return xhr.responseText;
+    }
+  } catch (e) { console.warn("Could not reach the sheet, using saved data.", e); }
+  return cached && cached.csv ? cached.csv : null; // sheet down / offline: last good copy
+}
+
+// Categories tab columns: slug, name, tile, active
+function sheetCsvToCategories(csvText) {
+  const rows = parseCSV(csvText);
+  if (rows.length < 2) return [];
+  const header = rows[0].map((h) => h.trim().toLowerCase());
+  const col = (r, name) => {
+    const i = header.indexOf(name);
+    return i === -1 ? "" : (r[i] || "").trim();
+  };
+  const list = [];
+  rows.slice(1).forEach((r, idx) => {
+    if (["no", "n", "false", "0", "hide", "hidden"].includes(col(r, "active").toLowerCase())) return;
+    const name = col(r, "name");
+    let slug = col(r, "slug") || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    let tile = col(r, "tile");
+    if (!name || !slug) { console.warn("Category row " + (idx + 2) + " skipped (needs name)"); return; }
+    if (tile && !tile.includes("/")) tile = "assets/products/" + tile;
+    list.push({ slug, name, tile });
+  });
+  return list;
+}
+
+(function loadFromSheet() {
+  try {
+    // Categories first, because products refer to them
+    if (CATEGORIES_CSV_URL) {
+      const csv = fetchSheetCsv(CATEGORIES_CSV_URL, "crafty_categories_cache_v1", (t) => sheetCsvToCategories(t).length);
+      const cats = csv ? sheetCsvToCategories(csv) : [];
+      if (cats.length) CATEGORIES.splice(0, CATEGORIES.length, ...cats);
+    }
+    if (SHEET_CSV_URL) {
+      const csv = fetchSheetCsv(SHEET_CSV_URL, "crafty_sheet_cache_v1", (t) => sheetCsvToProducts(t).length);
+      const list = csv ? sheetCsvToProducts(csv) : [];
+      if (list.length) PRODUCTS.splice(0, PRODUCTS.length, ...list);
+    }
+  } catch (e) {
+    console.warn("Sheet load failed, using built-in data.", e);
+  }
+})();
 
 function getProductById(id) {
   return PRODUCTS.find((p) => p.id === id);
